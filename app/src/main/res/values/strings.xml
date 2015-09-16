@@ -7,6 +7,6 @@
     <string name="choice_1">Streaking the lawn</string>
     <string name="choice_2">High-fiving Dean Groves</string>
     <string name="choice_3">Witness the Purple Shadows</string>
-    <!--<string name="edit_message">Enter a message</string>-->
-    <!--<string name="button_send">Send</string>-->
+    <string name="name_hint">Enter your name</string>
+    <string name="name_submit">Submit</string>
 </resources>

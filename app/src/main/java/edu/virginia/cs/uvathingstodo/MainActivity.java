@@ -1,5 +1,9 @@
 package edu.virginia.cs.uvathingstodo;
 
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,6 +43,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void nameSubmit(View view) {
+        EditText editText = (EditText) findViewById(R.id.edit_name);
+        Context context = getApplicationContext();
+        String name = editText.getText().toString();
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, "Hello, " + name + "!", duration);
+        toast.show();
     }
 
     public void itemPicked(View view) {
