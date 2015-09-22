@@ -9,4 +9,7 @@
     <string name="choice_3">Witness the Purple Shadows</string>
     <string name="name_hint">Enter your name</string>
     <string name="name_submit">Submit</string>
+    <string name="title_activity_item">ItemActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 </resources>

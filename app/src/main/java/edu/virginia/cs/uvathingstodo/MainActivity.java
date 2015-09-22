@@ -1,21 +1,22 @@
 package edu.virginia.cs.uvathingstodo;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView;
+
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -23,8 +24,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 
-import java.util.Date;
-
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements
         ConnectionCallbacks, OnConnectionFailedListener{
@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity implements
     protected String mLatitudeText;
     protected String mLongitudeText;
 
+    ArrayList<String> itemList = new ArrayList<String>();
+    ArrayList<String> itemList2 = new ArrayList<String>();
+    ArrayAdapter<String> adapter;
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -52,8 +55,25 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         mGoogleApiClient.connect();
 
+        addItems();
+//
+        ListView listView = (ListView)findViewById(R.id.listView);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, itemList);
+
+
+        listView.setOnItemClickListener(mMessageClickedHandler);
+        listView.setAdapter(adapter);
 
     }
+
+    private AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {
+        public void onItemClick(AdapterView parent, View v, int position, long id) {
+            Toast.makeText(getApplicationContext(), itemList.get(position), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getApplicationContext(), ItemActivity.class);
+            intent.putExtra("item_name", itemList.get(position));
+            startActivity(intent);
+        }
+    };
 
     @Override
     protected void onStart() {
@@ -108,6 +128,8 @@ public class MainActivity extends AppCompatActivity implements
                 Button button1 = (Button) findViewById(R.id.choice_1);
                 String selection1 = button1.getText().toString();
                 textView1.setText("You chose: " + selection1);
+                Intent intent = new Intent(this, ItemActivity.class);
+                startActivity(intent);
             break;
 
             case R.id.choice_2:
@@ -182,5 +204,39 @@ public class MainActivity extends AppCompatActivity implements
         // attempt to re-establish the connection.
         //Log.i(TAG, "Connection suspended");
         mGoogleApiClient.connect();
+    }
+
+    public void addItems() {
+        itemList2.add("hello");
+        itemList2.add("world");
+        itemList2.add("my");
+        itemList2.add("name");
+        itemList2.add("scott");
+        itemList2.add("hello");
+        itemList2.add("world");
+        itemList2.add("my");
+        itemList2.add("name");
+        itemList2.add("scott");
+        itemList2.add("hello");
+        itemList2.add("world");
+        itemList2.add("my");
+        itemList2.add("name");
+        itemList2.add("scott");
+        itemList2.add("hello");
+        itemList2.add("world");
+        itemList2.add("my");
+        itemList2.add("name");
+        itemList2.add("scott");
+        itemList2.add("hello");
+        itemList2.add("world");
+        itemList2.add("my");
+        itemList2.add("name");
+        itemList2.add("scott");
+
+        for (int i = 0; i < itemList2.size(); i++) {
+            itemList.add(itemList2.get(i));
+//            adapter.notifyDataSetChanged();
+//            Log.d("BuildingListView", itemList.toString());
+        }
     }
 }
