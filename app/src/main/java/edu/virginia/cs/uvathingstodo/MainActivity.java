@@ -114,14 +114,14 @@ public class MainActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-//    public void nameSubmit(View view) {
-//        EditText editText = (EditText) findViewById(R.id.edit_name);
-//        Context context = getApplicationContext();
-//        String name = editText.getText().toString();
-//        int duration = Toast.LENGTH_SHORT;
-//        Toast toast = Toast.makeText(context, "Hello, " + name + "!", duration);
-//        toast.show();
-//    }
+    public void nameSubmit(View view) {
+        EditText editText = (EditText) findViewById(R.id.edit_name);
+        Context context = getApplicationContext();
+        String name = editText.getText().toString();
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, "Hello, " + name + "!", duration);
+        toast.show();
+    }
 
     public void randomItem(View view) {
         Random rand = new Random();
