@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements
     ArrayList<String[]> itemList2 = new ArrayList<String[]>();
     ArrayAdapter<String> adapter;
 
+    int ItemActivityRequestCode;
+
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -50,8 +52,25 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == ItemActivityRequestCode && resultCode == RESULT_OK && data != null) {
+            String number = data.getStringExtra("item_completed");
+//            Context context = getApplicationContext();
+//            int duration = Toast.LENGTH_SHORT;
+//            Toast toast = Toast.makeText(context, name, duration);
+//            toast.show();
+            int position = Integer.parseInt(number);
+            String oldText = itemList.get(position);
+            itemList.set(position, oldText + " (Completed)");
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         buildGoogleApiClient();
         setContentView(R.layout.activity_main);
         mGoogleApiClient.connect();
@@ -73,8 +92,9 @@ public class MainActivity extends AppCompatActivity implements
             Intent intent = new Intent(getApplicationContext(), ItemActivity.class);
             intent.putExtra("item_name", itemList.get(position));
             intent.putExtra("item_description", itemList2.get(position)[1]);
+            intent.putExtra("item_number", position + "");
 
-            startActivity(intent);
+            startActivityForResult(intent, ItemActivityRequestCode);
         }
     };
 
@@ -114,14 +134,14 @@ public class MainActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    public void nameSubmit(View view) {
-        EditText editText = (EditText) findViewById(R.id.edit_name);
-        Context context = getApplicationContext();
-        String name = editText.getText().toString();
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(context, "Hello, " + name + "!", duration);
-        toast.show();
-    }
+//    public void nameSubmit(View view) {
+//        EditText editText = (EditText) findViewById(R.id.edit_name);
+//        Context context = getApplicationContext();
+//        String name = editText.getText().toString();
+//        int duration = Toast.LENGTH_SHORT;
+//        Toast toast = Toast.makeText(context, "Hello, " + name + "!", duration);
+//        toast.show();
+//    }
 
     public void randomItem(View view) {
         Random rand = new Random();
@@ -130,8 +150,9 @@ public class MainActivity extends AppCompatActivity implements
         Intent intent = new Intent(getApplicationContext(), ItemActivity.class);
         intent.putExtra("item_name", itemList.get(position));
         intent.putExtra("item_description", itemList2.get(position)[1]);
+        intent.putExtra("item_number", position + "");
 
-        startActivity(intent);
+        startActivityForResult(intent, ItemActivityRequestCode);
 
     }
 

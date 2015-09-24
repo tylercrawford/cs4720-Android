@@ -1,13 +1,21 @@
 package edu.virginia.cs.uvathingstodo;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Random;
 
 public class ItemActivity extends AppCompatActivity {
+
+    String item_number;
+    String name = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,7 +23,8 @@ public class ItemActivity extends AppCompatActivity {
         setContentView(R.layout.activity_item);
 
         Intent intent = getIntent();
-        String name = intent.getStringExtra("item_name");
+        name = intent.getStringExtra("item_name");
+        item_number = intent.getStringExtra("item_number");
         String description = intent.getStringExtra("item_description");
         TextView textView1 = (TextView) findViewById(R.id.display);
         textView1.setText(name);
@@ -44,5 +53,21 @@ public class ItemActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void completedItem(View view) {
+
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, "Good Work! You completed " + name, duration);
+        toast.show();
+
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.putExtra("item_completed", item_number);
+        setResult(RESULT_OK, intent);
+        finish();
+
+        //startActivity(intent);
+
     }
 }
