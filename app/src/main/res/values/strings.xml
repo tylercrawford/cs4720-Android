@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">UVA Things To Do</string>
+    <string name="app_name">100 Things To Do at UVA Before You Graduate</string>
 
     <string name="action_settings">Settings</string>
     <string name="question1">Which item did you complete?</string>
@@ -7,7 +7,7 @@
     <string name="choice_1">Streaking the lawn</string>
     <string name="choice_2">High-fiving Dean Groves</string>
     <string name="choice_3">Witness the Purple Shadows</string>
-    <string name="name_hint">Enter your name</string>
+    <string name="name_hint">Select a Random Item</string>
     <string name="name_submit">Submit</string>
     <string name="title_activity_item">ItemActivity</string>
 
