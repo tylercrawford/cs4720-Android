@@ -1,21 +1,16 @@
 package edu.virginia.cs.uvathingstodo;
 
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 
 import com.google.android.gms.common.ConnectionResult;
@@ -33,7 +28,6 @@ public class MainActivity extends AppCompatActivity implements
     protected GoogleApiClient mGoogleApiClient;
 
     protected Location mLastLocation;
-
     protected String mLatitudeText;
     protected String mLongitudeText;
 
@@ -42,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements
     ArrayAdapter<String> adapter;
 
     int ItemActivityRequestCode;
+    private ListView listView;
+    DBHelper mydb;
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -70,33 +66,59 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         buildGoogleApiClient();
-        setContentView(R.layout.activity_main);
         mGoogleApiClient.connect();
 
+        mydb = new DBHelper(this);
+        //mydb.DropTable();
+//        for(int i = 0; i < mydb.numberOfRows(); i++) {
+//            mydb.deleteItem(i);
+//        }
         addItems();
+        for (String[] item : itemList2) {
+            mydb.insertItem(item[0], item[1]);
+        }
+
+        ArrayList array_list = mydb.getAllItems();
+        Toast.makeText(getApplicationContext(), "DatabaseSize: " + array_list.size(), Toast.LENGTH_SHORT).show();
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, array_list);
+        //adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, itemList);
+
+        //addItems();
 //
-        ListView listView = (ListView)findViewById(R.id.listView);
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, itemList);
+        listView = (ListView)findViewById(R.id.listView1);
+        listView.setAdapter(arrayAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int id_To_Search = position + 1;
 
+                Bundle dataBundle = new Bundle();
+                dataBundle.putInt("id", id_To_Search);
+                Toast.makeText(getApplicationContext(), "Index: "+id_To_Search, Toast.LENGTH_SHORT).show();
 
-        listView.setOnItemClickListener(mMessageClickedHandler);
-        listView.setAdapter(adapter);
+                Intent intent = new Intent(getApplicationContext(), ItemActivity.class);
 
+                intent.putExtras(dataBundle);
+                startActivity(intent);
+            }
+        });
+        //listView.setOnItemClickListener(mMessageClickedHandler);
     }
 
-    private AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {
-        public void onItemClick(AdapterView parent, View v, int position, long id) {
-            //Toast.makeText(getApplicationContext(), itemList.get(position), Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(getApplicationContext(), ItemActivity.class);
-            intent.putExtra("item_name", itemList.get(position));
-            intent.putExtra("item_description", itemList2.get(position)[1]);
-            intent.putExtra("item_number", position + "");
-
-            startActivityForResult(intent, ItemActivityRequestCode);
-        }
-    };
+//    private AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {
+//        public void onItemClick(AdapterView parent, View v, int position, long id) {
+//            //Toast.makeText(getApplicationContext(), itemList.get(position), Toast.LENGTH_SHORT).show();
+//            Intent intent = new Intent(getApplicationContext(), ItemActivity.class);
+//            intent.putExtra("item_name", itemList.get(position));
+//            intent.putExtra("item_description", itemList2.get(position)[1]);
+//            intent.putExtra("item_number", position + "");
+//
+//            startActivityForResult(intent, ItemActivityRequestCode);
+//        }
+//    };
 
     @Override
     protected void onStart() {
