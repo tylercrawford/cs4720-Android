@@ -40,6 +40,7 @@ public class ItemActivity extends Activity {
 
         title_view = (TextView) findViewById(R.id.title_field);
         description_view = (TextView) findViewById(R.id.description_field);
+        completed_view = (TextView) findViewById(R.id.completed_field);
 
         mydb = new DBHelper(this);
 
@@ -58,7 +59,7 @@ public class ItemActivity extends Activity {
 //
                 String title = rs.getString(rs.getColumnIndex(DBHelper.ITEMS_COULMN_TITLE));
                 String description = rs.getString(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_DESCRIPTION));
-                int completed = rs.getInt(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_COMPLETED));
+                String completed = rs.getString(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_COMPLETED));
 ////                double longitude = rs.getDouble(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_LONGITUDE));
 ////                double latitude = rs.getDouble(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_LATITUDE));
 ////                String date = rs.getString(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_DATE));
@@ -70,7 +71,7 @@ public class ItemActivity extends Activity {
 ////
                 title_view.setText(title);
                 description_view.setText(description);
-                completed_view.setText(completed + "");
+                completed_view.setText(completed);
             }
         }
 
@@ -112,7 +113,7 @@ public class ItemActivity extends Activity {
         if(extras != null) {
             int Value = extras.getInt("id");
             if (Value > 0) {
-                if(mydb.updateItem(id_To_Update, title_view.getText().toString(), description_view.getText().toString(), 1, 0, 0, "Today", "")) {
+                if(mydb.updateItem(id_To_Update, title_view.getText().toString(), description_view.getText().toString(), "Completed!", 0, 0, "Today", "")) {
                     Toast.makeText(getApplicationContext(), "Completed " + title_view.getText().toString(), Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);

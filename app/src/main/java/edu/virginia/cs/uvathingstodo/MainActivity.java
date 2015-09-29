@@ -72,13 +72,15 @@ public class MainActivity extends AppCompatActivity implements
         mGoogleApiClient.connect();
 
         mydb = new DBHelper(this);
-        //mydb.DropTable();
+//        mydb.DropTable();
 //        for(int i = 0; i < mydb.numberOfRows(); i++) {
 //            mydb.deleteItem(i);
 //        }
-        addItems();
-        for (String[] item : itemList2) {
-            mydb.insertItem(item[0], item[1]);
+        if (mydb.numberOfRows() == 0) {
+            addItems();
+            for (String[] item : itemList2) {
+                mydb.insertItem(item[0], item[1]);
+            }
         }
 
         ArrayList array_list = mydb.getAllItems();
@@ -266,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements
 
     public void addItems() {
         // This will be replaced by reading from local storage by the next milestone
-        itemList2.add(new String[] {"Nab the #1 Ticket at Bodo's", "Get up early and snag the first Bodo's ticket.  Thousands of customers come to this corner shop every day.  Can you beat the crowd?"});
+        itemList2.add(new String[] {"Nab the #1 Ticket at Bodo's!", "Get up early and snag the first Bodo's ticket.  Thousands of customers come to this corner shop every day.  Can you beat the crowd?"});
         itemList2.add(new String[] {"Dining Hall Marathon", "Go eat at all three dining halls in one day!"});
         itemList2.add(new String[] {"See a Horse at Foxfield", "Going to Foxfield can be a blast, but make sure you try to remember to see a horse! It is a race after all"});
         itemList2.add(new String[] {"Paint Beta Bridge", "Beta Bridge has een painted over so many times that it has almost half a foot of paint built up on its walls.  Leave your mark on this landmark!"});

@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final String DATABASE_NAME = "TestDatabase.db";
+    public static final String DATABASE_NAME = "TestDatabase2.db";
     public static final String ITEMS_TABLE_NAME = "items";
     public static final String ITEMS_COLUMN_ID = "id";
     public static final String ITEMS_COULMN_TITLE = "title";
@@ -37,7 +37,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db){
         db.execSQL(
                 "create table items " +
-                        "(id integer primary key, title text, description text, completed integer, latitude real, longitude real, date text, image blob)"
+                        "(id integer primary key, title text, description text, completed text, latitude real, longitude real, date text, image blob)"
         );
 //        CreateArrayList();
 //        for (String[] item : itemList) {
@@ -62,7 +62,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ITEMS_COULMN_TITLE, title);
         contentValues.put(ITEMS_COLUMN_DESCRIPTION, description);
-        contentValues.put(ITEMS_COLUMN_COMPLETED, 0);
+        contentValues.put(ITEMS_COLUMN_COMPLETED, "Not yet completed");
         contentValues.put(ITEMS_COLUMN_LATITUDE, 0);
         contentValues.put(ITEMS_COLUMN_LONGITUDE, 0);
         contentValues.put(ITEMS_COLUMN_DATE, "");
@@ -73,7 +73,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getData(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM items WHERE title='Dining Hall Marathon'", null);
+        Cursor res = db.rawQuery("SELECT * FROM items WHERE id='"+id+"'", null);
         return res;
     }
 
@@ -83,7 +83,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return  numRows;
     }
 
-    public boolean updateItem (Integer id, String title, String description, Integer completed, double lat, double lon, String date, String img) {
+    public boolean updateItem (Integer id, String title, String description, String completed, double lat, double lon, String date, String img) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(ITEMS_COULMN_TITLE, title);
