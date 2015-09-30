@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final String DATABASE_NAME = "TestDatabase2.db";
+    public static final String DATABASE_NAME = "TestDatabase3.db";
     public static final String ITEMS_TABLE_NAME = "items";
     public static final String ITEMS_COLUMN_ID = "id";
     public static final String ITEMS_COULMN_TITLE = "title";
@@ -39,6 +39,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 "create table items " +
                         "(id integer primary key, title text, description text, completed text, latitude real, longitude real, date text, image blob)"
         );
+        db.execSQL(
+                "create table users " +
+                        "(id integer primary key, username text, password text)"
+        );
 //        CreateArrayList();
 //        for (String[] item : itemList) {
 //            insertItem(item[0], item[1]);
@@ -57,6 +61,20 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public boolean registerUser (String username, String password) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("username", username);
+        contentValues.put("password", password);
+        db.insert("users", null, contentValues);
+        String table_name = username+"_items";
+//        db.execSQL(
+//                "create table " + table_name + " " +
+//                        "(id integer primary key, title text, description text, completed text, latitude real, longitude real, date text, image blob)"
+//        );
+        return true;
+    }
+
     public boolean insertItem (String title, String description) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -69,6 +87,12 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(ITEMS_COLUMN_IMAGE, "");
         db.insert(ITEMS_TABLE_NAME, null, contentValues);
         return true;
+    }
+
+    public Cursor getPassword(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT password FROM users WHERE username='"+username+"'", null);
+        return res;
     }
 
     public Cursor getData(int id) {

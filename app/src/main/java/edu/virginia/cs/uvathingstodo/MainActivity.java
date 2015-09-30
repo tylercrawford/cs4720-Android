@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements
     int ItemActivityRequestCode;
     private ListView listView;
     DBHelper mydb;
+    String username;
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -70,6 +71,16 @@ public class MainActivity extends AppCompatActivity implements
 
         buildGoogleApiClient();
         mGoogleApiClient.connect();
+
+        Bundle extras = getIntent().getExtras();
+        if(extras != null) {
+            username = extras.getString("username");
+            Toast.makeText(getApplicationContext(), "User: "+username, Toast.LENGTH_SHORT).show();
+
+        }
+        Toast.makeText(getApplicationContext(), "User: "+username, Toast.LENGTH_SHORT).show();
+
+
 
         mydb = new DBHelper(this);
 //        mydb.DropTable();
