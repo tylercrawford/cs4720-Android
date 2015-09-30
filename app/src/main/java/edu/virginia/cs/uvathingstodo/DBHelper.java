@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final String DATABASE_NAME = "TestDatabase3.db";
+    public static final String DATABASE_NAME = "TestDatabase4.db";
     public static final String ITEMS_TABLE_NAME = "items";
     public static final String ITEMS_COLUMN_ID = "id";
     public static final String ITEMS_COULMN_TITLE = "title";
@@ -68,14 +68,14 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("password", password);
         db.insert("users", null, contentValues);
         String table_name = username+"_items";
-//        db.execSQL(
-//                "create table " + table_name + " " +
-//                        "(id integer primary key, title text, description text, completed text, latitude real, longitude real, date text, image blob)"
-//        );
+        db.execSQL(
+                "create table " + table_name + " " +
+                        "(id integer primary key, title text, description text, completed text, latitude real, longitude real, date text, image blob)"
+        );
         return true;
     }
 
-    public boolean insertItem (String title, String description) {
+    public boolean insertItem (String title, String description, String username) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(ITEMS_COULMN_TITLE, title);
@@ -85,7 +85,8 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(ITEMS_COLUMN_LONGITUDE, 0);
         contentValues.put(ITEMS_COLUMN_DATE, "");
         contentValues.put(ITEMS_COLUMN_IMAGE, "");
-        db.insert(ITEMS_TABLE_NAME, null, contentValues);
+        String table_name = username + "_items";
+        db.insert(table_name, null, contentValues);
         return true;
     }
 
@@ -95,19 +96,21 @@ public class DBHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public Cursor getData(int id) {
+    public Cursor getData(int id, String username) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM items WHERE id='"+id+"'", null);
+        String table_name = username + "_items";
+        Cursor res = db.rawQuery("SELECT * FROM "+table_name+" WHERE id='"+id+"'", null);
         return res;
     }
 
-    public int numberOfRows() {
+    public int numberOfRows(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
-        int numRows = (int) DatabaseUtils.queryNumEntries(db, ITEMS_TABLE_NAME);
+        String table_name = username + "_items";
+        int numRows = (int) DatabaseUtils.queryNumEntries(db, table_name);
         return  numRows;
     }
 
-    public boolean updateItem (Integer id, String title, String description, String completed, double lat, double lon, String date, String img) {
+    public boolean updateItem (Integer id, String title, String description, String completed, double lat, double lon, String date, String img, String username) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(ITEMS_COULMN_TITLE, title);
@@ -117,7 +120,8 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(ITEMS_COLUMN_LONGITUDE, lon);
         contentValues.put(ITEMS_COLUMN_DATE, date);
         contentValues.put(ITEMS_COLUMN_IMAGE, img);
-        db.update(ITEMS_TABLE_NAME, contentValues, "id = ? ", new String[] { Integer.toString(id)} );
+        String table_name = username + "_items";
+        db.update(table_name, contentValues, "id = ? ", new String[] { Integer.toString(id)} );
         return  true;
     }
 
@@ -126,11 +130,12 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.delete(ITEMS_TABLE_NAME, "id = ? ", new String[] { Integer.toString(id)});
     }
 
-    public ArrayList<String> getAllItems() {
+    public ArrayList<String> getAllItems(String username) {
         ArrayList<String> items = new ArrayList<String>();
-
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from items", null);
+
+        String table_name = username + "_items";
+        Cursor res = db.rawQuery("select * from "+table_name, null);
         res.moveToFirst();
 
         while(res.isAfterLast() == false) {

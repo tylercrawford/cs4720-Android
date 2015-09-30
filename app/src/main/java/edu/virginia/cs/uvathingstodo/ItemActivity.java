@@ -19,6 +19,8 @@ public class ItemActivity extends Activity {
     String item_number;
     String name = "";
 
+    String username;
+
     private DBHelper mydb;
     TextView title_view;
     TextView description_view;
@@ -49,9 +51,10 @@ public class ItemActivity extends Activity {
 //        Toast.makeText(getApplicationContext(), "Index value: "+Value, Toast.LENGTH_SHORT).show();
         if(extras != null) {
             int Value = extras.getInt("id");
+            username = extras.getString("username");
 
             if(Value > 0) {
-                Cursor rs = mydb.getData(Value);
+                Cursor rs = mydb.getData(Value, username);
                 Toast.makeText(getApplicationContext(), rs.toString(), Toast.LENGTH_SHORT).show();
                 id_To_Update = Value;
                 rs.moveToFirst();
@@ -113,9 +116,14 @@ public class ItemActivity extends Activity {
         if(extras != null) {
             int Value = extras.getInt("id");
             if (Value > 0) {
-                if(mydb.updateItem(id_To_Update, title_view.getText().toString(), description_view.getText().toString(), "Completed!", 0, 0, "Today", "")) {
+                if(mydb.updateItem(id_To_Update, title_view.getText().toString(), description_view.getText().toString(), "Completed!", 0, 0, "Today", "", username)) {
                     Toast.makeText(getApplicationContext(), "Completed " + title_view.getText().toString(), Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    Bundle dataBundle = new Bundle();
+                    dataBundle.putString("username", username);
+
+                    intent.putExtras(dataBundle);
+
                     startActivity(intent);
                 }
                 else {

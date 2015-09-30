@@ -76,9 +76,8 @@ public class MainActivity extends AppCompatActivity implements
         if(extras != null) {
             username = extras.getString("username");
             Toast.makeText(getApplicationContext(), "User: "+username, Toast.LENGTH_SHORT).show();
-
         }
-        Toast.makeText(getApplicationContext(), "User: "+username, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "User: "+username, Toast.LENGTH_SHORT).show();
 
 
 
@@ -87,14 +86,14 @@ public class MainActivity extends AppCompatActivity implements
 //        for(int i = 0; i < mydb.numberOfRows(); i++) {
 //            mydb.deleteItem(i);
 //        }
-        if (mydb.numberOfRows() == 0) {
+        if (mydb.numberOfRows(username) == 0) {
             addItems();
             for (String[] item : itemList2) {
-                mydb.insertItem(item[0], item[1]);
+                mydb.insertItem(item[0], item[1], username);
             }
         }
 
-        ArrayList array_list = mydb.getAllItems();
+        ArrayList array_list = mydb.getAllItems(username);
         Toast.makeText(getApplicationContext(), "DatabaseSize: " + array_list.size(), Toast.LENGTH_SHORT).show();
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, array_list);
         //adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, itemList);
@@ -110,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements
 
                 Bundle dataBundle = new Bundle();
                 dataBundle.putInt("id", id_To_Search);
+                dataBundle.putString("username", username);
                 Toast.makeText(getApplicationContext(), "Index: "+id_To_Search, Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(getApplicationContext(), ItemActivity.class);
@@ -180,44 +180,18 @@ public class MainActivity extends AppCompatActivity implements
 
     public void randomItem(View view) {
         Random rand = new Random();
-        int position = rand.nextInt(itemList.size());
+        int position = rand.nextInt(mydb.numberOfRows(username));
+
+        Bundle dataBundle = new Bundle();
+        dataBundle.putInt("id", position);
+        dataBundle.putString("username", username);
 
         Intent intent = new Intent(getApplicationContext(), ItemActivity.class);
-        intent.putExtra("item_name", itemList.get(position));
-        intent.putExtra("item_description", itemList2.get(position)[1]);
-        intent.putExtra("item_number", position + "");
 
-        startActivityForResult(intent, ItemActivityRequestCode);
-
+        intent.putExtras(dataBundle);
+        startActivity(intent);
     }
 
-//    public void itemPicked(View view) {
-//        switch(view.getId()) {
-//
-//            case R.id.choice_1:
-//                TextView textView1 = (TextView) findViewById(R.id.display);
-//                Button button1 = (Button) findViewById(R.id.choice_1);
-//                String selection1 = button1.getText().toString();
-//                textView1.setText("You chose: " + selection1);
-//                Intent intent = new Intent(this, ItemActivity.class);
-//                startActivity(intent);
-//            break;
-//
-//            case R.id.choice_2:
-//                TextView textView2 = (TextView) findViewById(R.id.display);
-//                Button button2 = (Button) findViewById(R.id.choice_2);
-//                String selection2 = button2.getText().toString();
-//                textView2.setText("You chose: " + selection2);
-//            break;
-//
-//            case R.id.choice_3:
-//                TextView textView3 = (TextView) findViewById(R.id.display);
-//                Button button3 = (Button) findViewById(R.id.choice_3);
-//                String selection3 = button3.getText().toString();
-//                textView3.setText("You chose: " + selection3);
-//            break;
-//        }
-//    }
 
 
 //    public void getLocation(View view) {
