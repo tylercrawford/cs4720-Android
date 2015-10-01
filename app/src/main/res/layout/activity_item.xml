@@ -37,6 +37,7 @@
         android:layout_height="wrap_content"
         android:text="Completed!"
         android:id="@+id/button"
-        android:onClick="completedItem"/>
+        android:onClick="completedItem"
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

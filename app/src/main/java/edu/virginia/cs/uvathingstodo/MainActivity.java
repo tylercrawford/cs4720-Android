@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements
         Bundle extras = getIntent().getExtras();
         if(extras != null) {
             username = extras.getString("username");
-            Toast.makeText(getApplicationContext(), "User: "+username, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "User: "+username, Toast.LENGTH_SHORT).show();
         }
         //Toast.makeText(getApplicationContext(), "User: "+username, Toast.LENGTH_SHORT).show();
 
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         ArrayList array_list = mydb.getAllItems(username);
-        Toast.makeText(getApplicationContext(), "DatabaseSize: " + array_list.size(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "DatabaseSize: " + array_list.size(), Toast.LENGTH_SHORT).show();
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, array_list);
         //adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, itemList);
 
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements
                 Bundle dataBundle = new Bundle();
                 dataBundle.putInt("id", id_To_Search);
                 dataBundle.putString("username", username);
-                Toast.makeText(getApplicationContext(), "Index: "+id_To_Search, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getApplicationContext(), "Index: "+id_To_Search, Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(getApplicationContext(), ItemActivity.class);
 

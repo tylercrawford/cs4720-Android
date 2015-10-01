@@ -55,7 +55,7 @@ public class ItemActivity extends Activity {
 
             if(Value > 0) {
                 Cursor rs = mydb.getData(Value, username);
-                Toast.makeText(getApplicationContext(), rs.toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), rs.toString(), Toast.LENGTH_SHORT).show();
                 id_To_Update = Value;
                 rs.moveToFirst();
 
