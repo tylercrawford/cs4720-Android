@@ -42,11 +42,11 @@ public class LoginActivity extends AppCompatActivity {
 
                 try {
                     String password_registered = rs.getString(rs.getColumnIndex("password"));
-                    Toast.makeText(getApplicationContext(), "Password: " + password_registered, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "Password: " + password_registered, Toast.LENGTH_SHORT).show();
 
 
                     if (password_entered.equals(password_registered)) {
-                        Toast.makeText(getApplicationContext(), "Redirecting...", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "Redirecting...", Toast.LENGTH_SHORT).show();
                         Bundle dataBundle = new Bundle();
                         dataBundle.putString("username", username);
 
@@ -57,10 +57,16 @@ public class LoginActivity extends AppCompatActivity {
 
                     } else {
                         Toast.makeText(getApplicationContext(), "Wrong Credentials", Toast.LENGTH_SHORT).show();
+                        pword_field.setText("");
+                        pword_field.setHint("Password");
+
                     }
                 }
                 catch (Exception e) {
                     Toast.makeText(getApplicationContext(), "Username does not exist", Toast.LENGTH_SHORT).show();
+                    pword_field.setText("");
+                    pword_field.setHint("Password");
+
                 }
 
             }

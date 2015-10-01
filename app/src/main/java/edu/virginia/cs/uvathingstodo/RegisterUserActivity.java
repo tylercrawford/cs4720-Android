@@ -52,14 +52,26 @@ public class RegisterUserActivity extends AppCompatActivity {
                 if (!uniqueUser) {
                     username.setText("");
                     username.setHint("Username");
+                    password.setText("");
+                    password2.setText("");
+                    password.setHint("Password");
+                    password2.setHint("Retype Password");
                     Toast.makeText(getApplicationContext(), "Sorry, but '" + username_field + "' is already taken", Toast.LENGTH_SHORT).show();
                 } else if (username_field.equals("")) {
                     username.setText("");
                     username.setHint("Username");
+                    password.setText("");
+                    password2.setText("");
+                    password.setHint("Password");
+                    password2.setHint("Retype Password");
                     Toast.makeText(getApplicationContext(), "Username cannot be blank", Toast.LENGTH_SHORT).show();
                 } else if (username_field.contains(" ")) {
                     username.setText("");
                     username.setHint("Username");
+                    password.setText("");
+                    password2.setText("");
+                    password.setHint("Password");
+                    password2.setHint("Retype Password");
                     Toast.makeText(getApplicationContext(), "Username cannot contain spaces", Toast.LENGTH_SHORT).show();
                 } else if (password_field.equals("")) {
                     password.setText("");
@@ -75,6 +87,14 @@ public class RegisterUserActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Passwords must match", Toast.LENGTH_SHORT).show();
                 } else {
                     mydb.registerUser(username_field, password_field);
+                    Bundle dataBundle = new Bundle();
+                    dataBundle.putString("username", username_field);
+
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+
+                    intent.putExtras(dataBundle);
+                    startActivity(intent);
+
                     Toast.makeText(getApplicationContext(), "User registered", Toast.LENGTH_SHORT).show();
                 }
             }

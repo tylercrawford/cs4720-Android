@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -75,17 +76,9 @@ public class MainActivity extends AppCompatActivity implements
         Bundle extras = getIntent().getExtras();
         if(extras != null) {
             username = extras.getString("username");
-            //Toast.makeText(getApplicationContext(), "User: "+username, Toast.LENGTH_SHORT).show();
         }
-        //Toast.makeText(getApplicationContext(), "User: "+username, Toast.LENGTH_SHORT).show();
-
-
 
         mydb = new DBHelper(this);
-//        mydb.DropTable();
-//        for(int i = 0; i < mydb.numberOfRows(); i++) {
-//            mydb.deleteItem(i);
-//        }
         if (mydb.numberOfRows(username) == 0) {
             addItems();
             for (String[] item : itemList2) {
@@ -94,12 +87,11 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         ArrayList array_list = mydb.getAllItems(username);
-        //Toast.makeText(getApplicationContext(), "DatabaseSize: " + array_list.size(), Toast.LENGTH_SHORT).show();
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, array_list);
-        //adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, itemList);
 
-        //addItems();
-//
+        TextView welcomeText = (TextView)findViewById(R.id.welcome);
+        welcomeText.setText("Hello, " + username);
+
         listView = (ListView)findViewById(R.id.listView1);
         listView.setAdapter(arrayAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -110,7 +102,6 @@ public class MainActivity extends AppCompatActivity implements
                 Bundle dataBundle = new Bundle();
                 dataBundle.putInt("id", id_To_Search);
                 dataBundle.putString("username", username);
-               // Toast.makeText(getApplicationContext(), "Index: "+id_To_Search, Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(getApplicationContext(), ItemActivity.class);
 
@@ -118,20 +109,7 @@ public class MainActivity extends AppCompatActivity implements
                 startActivity(intent);
             }
         });
-        //listView.setOnItemClickListener(mMessageClickedHandler);
     }
-
-//    private AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {
-//        public void onItemClick(AdapterView parent, View v, int position, long id) {
-//            //Toast.makeText(getApplicationContext(), itemList.get(position), Toast.LENGTH_SHORT).show();
-//            Intent intent = new Intent(getApplicationContext(), ItemActivity.class);
-//            intent.putExtra("item_name", itemList.get(position));
-//            intent.putExtra("item_description", itemList2.get(position)[1]);
-//            intent.putExtra("item_number", position + "");
-//
-//            startActivityForResult(intent, ItemActivityRequestCode);
-//        }
-//    };
 
     @Override
     protected void onStart() {
@@ -168,15 +146,6 @@ public class MainActivity extends AppCompatActivity implements
 
         return super.onOptionsItemSelected(item);
     }
-
-//    public void nameSubmit(View view) {
-//        EditText editText = (EditText) findViewById(R.id.edit_name);
-//        Context context = getApplicationContext();
-//        String name = editText.getText().toString();
-//        int duration = Toast.LENGTH_SHORT;
-//        Toast toast = Toast.makeText(context, "Hello, " + name + "!", duration);
-//        toast.show();
-//    }
 
     public void randomItem(View view) {
         Random rand = new Random();

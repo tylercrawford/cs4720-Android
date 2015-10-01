@@ -148,7 +148,15 @@ public class DBHelper extends SQLiteOpenHelper {
         res.moveToFirst();
 
         while(res.isAfterLast() == false) {
-            items.add(res.getString(res.getColumnIndex(ITEMS_COULMN_TITLE)));
+            String title = res.getString(res.getColumnIndex(ITEMS_COULMN_TITLE));
+            String completed = res.getString(res.getColumnIndex(ITEMS_COLUMN_COMPLETED));
+            if (completed.equals("Completed!")) {
+                title = "(completed) \t" + title;
+            }
+            else {
+                title = "\t\t\t\t\t\t\t\t\t\t\t"+title;
+            }
+            items.add(title);
             res.moveToNext();
         }
         return items;

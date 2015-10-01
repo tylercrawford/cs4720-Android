@@ -9,12 +9,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Random;
 
-public class ItemActivity extends Activity {
+public class ItemActivity extends AppCompatActivity {
 
     String item_number;
     String name = "";
@@ -34,11 +35,6 @@ public class ItemActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item);
-
-        //Intent intent = getIntent();
-        //name = intent.getStringExtra("item_name");
-        //item_number = intent.getStringExtra("item_number");
-        //String description = intent.getStringExtra("item_description");
 
         title_view = (TextView) findViewById(R.id.title_field);
         description_view = (TextView) findViewById(R.id.description_field);
@@ -71,22 +67,18 @@ public class ItemActivity extends Activity {
                 if (!rs.isClosed()) {
                     rs.close();
                 }
+
+                if (completed.equals("Completed!")) {
+                    Toast.makeText(getApplicationContext(), "debhebd", Toast.LENGTH_SHORT).show();
+                    Button b = (Button) findViewById(R.id.button);
+                    b.setVisibility(View.GONE);
+                }
 ////
                 title_view.setText(title);
                 description_view.setText(description);
                 completed_view.setText(completed);
             }
         }
-
-
-
-
-
-//        TextView textView1 = (TextView) findViewById(R.id.display);
-//        textView1.setText(name);
-//        TextView textView2 = (TextView) findViewById(R.id.description);
-//        textView2.setText(description);
-
     }
 
     @Override
@@ -131,18 +123,6 @@ public class ItemActivity extends Activity {
                 }
             }
         }
-
-//        Context context = getApplicationContext();
-//        int duration = Toast.LENGTH_SHORT;
-//        Toast toast = Toast.makeText(context, "Good Work! You completed " + name, duration);
-//        toast.show();
-
-//        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//        intent.putExtra("item_completed", item_number);
-//        setResult(RESULT_OK, intent);
-//        finish();
-
-        //startActivity(intent);
 
     }
 }
