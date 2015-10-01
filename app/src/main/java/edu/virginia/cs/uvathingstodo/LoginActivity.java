@@ -69,8 +69,8 @@ public class LoginActivity extends AppCompatActivity {
         register_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Registering...", Toast.LENGTH_SHORT).show();
-                mydb.registerUser(username_field.getText().toString(), pword_field.getText().toString());
+                Intent intent = new Intent(getApplicationContext(), RegisterUserActivity.class);
+                startActivity(intent);
             }
         });
 

@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -77,6 +78,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public boolean insertItem (String title, String description, String username) {
         SQLiteDatabase db = this.getWritableDatabase();
+        String table_name = username + "_items";
         ContentValues contentValues = new ContentValues();
         contentValues.put(ITEMS_COULMN_TITLE, title);
         contentValues.put(ITEMS_COLUMN_DESCRIPTION, description);
@@ -85,7 +87,6 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(ITEMS_COLUMN_LONGITUDE, 0);
         contentValues.put(ITEMS_COLUMN_DATE, "");
         contentValues.put(ITEMS_COLUMN_IMAGE, "");
-        String table_name = username + "_items";
         db.insert(table_name, null, contentValues);
         return true;
     }
@@ -103,6 +104,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    public Cursor getUserData(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String table_name = "users";
+        Cursor res = db.rawQuery("SELECT * FROM "+table_name+" WHERE username='"+username+"'", null);
+        return res;
+    }
+
     public int numberOfRows(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
         String table_name = username + "_items";
@@ -113,6 +121,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public boolean updateItem (Integer id, String title, String description, String completed, double lat, double lon, String date, String img, String username) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+        String table_name = username + "_items";
         contentValues.put(ITEMS_COULMN_TITLE, title);
         contentValues.put(ITEMS_COLUMN_DESCRIPTION, description);
         contentValues.put(ITEMS_COLUMN_COMPLETED, completed);
@@ -120,22 +129,22 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(ITEMS_COLUMN_LONGITUDE, lon);
         contentValues.put(ITEMS_COLUMN_DATE, date);
         contentValues.put(ITEMS_COLUMN_IMAGE, img);
-        String table_name = username + "_items";
         db.update(table_name, contentValues, "id = ? ", new String[] { Integer.toString(id)} );
         return  true;
     }
 
-    public Integer deleteItem (Integer id) {
+    public Integer deleteItem (Integer id, String username) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(ITEMS_TABLE_NAME, "id = ? ", new String[] { Integer.toString(id)});
+        String table_name = username + "_items";
+        return db.delete(table_name, "id = ? ", new String[] { Integer.toString(id)});
     }
 
     public ArrayList<String> getAllItems(String username) {
         ArrayList<String> items = new ArrayList<String>();
-        SQLiteDatabase db = this.getReadableDatabase();
-
         String table_name = username + "_items";
-        Cursor res = db.rawQuery("select * from "+table_name, null);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("select * from " + table_name, null);
         res.moveToFirst();
 
         while(res.isAfterLast() == false) {
