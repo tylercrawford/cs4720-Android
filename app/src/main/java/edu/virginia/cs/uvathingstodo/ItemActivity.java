@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +32,8 @@ public class ItemActivity extends AppCompatActivity {
     TextView longitude_view;
     TextView date_view;
     int id_To_Update = 0;
+    Button camera_button;
+    ImageView image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,17 @@ public class ItemActivity extends AppCompatActivity {
         title_view = (TextView) findViewById(R.id.title_field);
         description_view = (TextView) findViewById(R.id.description_field);
         completed_view = (TextView) findViewById(R.id.completed_field);
+
+        camera_button = (Button) findViewById(R.id.camera_button);
+        image = (ImageView) findViewById(R.id.imageView);
+
+        camera_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, 0);
+            }
+        });
 
         mydb = new DBHelper(this);
 
@@ -101,6 +116,14 @@ public class ItemActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Auto-generated method stub
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Bitmap bp = (Bitmap) data.getExtras().get("data");
+        image.setImageBitmap(bp);
     }
 
     public void completedItem(View view) {
