@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -138,6 +139,8 @@ public class MainActivity extends AppCompatActivity {
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             TextView prof_username = (TextView) findViewById(R.id.profile_username);
             TextView numCompleted = (TextView) findViewById(R.id.profile_numTasks);
+            ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+
             prof_username.setText("Username: " + username);
 
             Cursor rs;
@@ -156,7 +159,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            numCompleted.setText("Tasks completes: " + taskCount + "/100");
+            numCompleted.setText("Tasks completed: " + taskCount + "/100");
+            progressBar.setProgress(taskCount);
         }
     }
 
@@ -181,6 +185,12 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        // If not horizontal, create menu button for profile
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            MenuItem profileMenu = menu.findItem(R.id.profile);
+            profileMenu.setVisible(false);
+        }
         return true;
     }
 
@@ -191,14 +201,17 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         if (id == R.id.logout) {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        } else if (id == R.id.profile) {
+            Bundle dataBundle = new Bundle();
+            dataBundle.putString("username", username);
+
+            Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+
+            intent.putExtras(dataBundle);
             startActivity(intent);
         }
 

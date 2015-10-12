@@ -76,11 +76,15 @@
             android:layout_marginTop="20dp"
             android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-        <TextView android:id="@+id/profile_name"
+        <ProgressBar android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1.22"
-            android:layout_width="0dp"
-            android:textSize="@dimen/abc_text_size_display_1_material" />
+            android:max="100"
+            android:minHeight="100dp"
+            android:minWidth="200dp"
+            android:progress="1"/>
+
 
     </LinearLayout>
 
