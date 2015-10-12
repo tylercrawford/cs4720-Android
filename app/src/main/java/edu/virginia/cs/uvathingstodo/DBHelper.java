@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final String DATABASE_NAME = "TestDatabase5.db";
+    public static final String DATABASE_NAME = "TestDatabase6.db";
     public static final String ITEMS_TABLE_NAME = "items";
     public static final String ITEMS_COLUMN_ID = "id";
     public static final String ITEMS_COULMN_TITLE = "title";
@@ -45,12 +45,8 @@ public class DBHelper extends SQLiteOpenHelper {
         );
         db.execSQL(
                 "create table users " +
-                        "(id integer primary key, username text, password text)"
+                        "(id integer primary key, username text, password text, image blob, image_exists integer, year text)"
         );
-//        CreateArrayList();
-//        for (String[] item : itemList) {
-//            insertItem(item[0], item[1]);
-//        }
     }
 
     @Override
@@ -65,9 +61,36 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean registerUser (String username, String password) {
+    public boolean registerUserWithImg (String username, String password, String year, Bitmap img) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        img.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+
+        contentValues.put("image", byteArray);
+        contentValues.put("image_exists", 1);
+
+        contentValues.put("year", year);
+        contentValues.put("username", username);
+        contentValues.put("password", password);
+        db.insert("users", null, contentValues);
+        String table_name = username+"_items";
+        db.execSQL(
+                "create table " + table_name + " " +
+                        "(id integer primary key, title text, description text, completed text, latitude real, longitude real, date text, image blob, image_exists integer)"
+        );
+        return true;
+    }
+
+    public boolean registerUserWithoutImg (String username, String password, String year) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put("image_exists", 0);
+
+        contentValues.put("year", year);
         contentValues.put("username", username);
         contentValues.put("password", password);
         db.insert("users", null, contentValues);
@@ -148,16 +171,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
         contentValues.put(ITEMS_COLUMN_IMAGE, byteArray);
         contentValues.put(ITEMS_COLUMN_IMAGE_EXISTS, 1);
-        db.update(table_name, contentValues, "id = ? ", new String[] { Integer.toString(id)} );
+        db.update(table_name, contentValues, "id = ? ", new String[]{Integer.toString(id)});
         return  true;
 
-    }
-
-
-    public Integer deleteItem (Integer id, String username) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        String table_name = username + "_items";
-        return db.delete(table_name, "id = ? ", new String[] { Integer.toString(id)});
     }
 
     public ArrayList<String> getAllItems(String username) {
@@ -182,41 +198,5 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         return items;
     }
-
-    private void CreateArrayList() {
-        itemList.add(new String[] {"Nab the #1 Ticket at Bodo's", "Get up early and snag the first Bodo's ticket.  Thousands of customers come to this corner shop every day.  Can you beat the crowd?"});
-        itemList.add(new String[] {"Dining Hall Marathon", "Go eat at all three dining halls in one day!"});
-        itemList.add(new String[] {"See a Horse at Foxfield", "Going to Foxfield can be a blast, but make sure you try to remember to see a horse! It is a race after all"});
-        itemList.add(new String[] {"Paint Beta Bridge", "Beta Bridge has een painted over so many times that it has almost half a foot of paint built up on its walls.  Leave your mark on this landmark!"});
-        itemList.add(new String[] {"Take a Professor to Lunch", "You sit in their class.  You may visit their Office Hours.  But to really have the UVA experience Jefferson wanted, get to know them with a free lunch (yes, ODOS gives you the money)."});
-        itemList.add(new String[] {"Play in Mad Bowl", "Don't let that beautiful pit go to waste.  Grab some friends and a ball of some sort and play a game to enjoy a nice day, or wait til it snows and bring a sled."});
-        itemList.add(new String[] {"Go Streaking", "A tradition for the past 40 years, the academical village serves a perfect place for a late night run."});
-        itemList.add(new String[] {"Eat at Bellair Market", "Just a little trip down Ivy, this small gas station has amazing sandwiches.  Recommendation: the Ednam"});
-        itemList.add(new String[] {"Go to Rotunda Sing", "UVA has tons of talented A Capella groups.  Hear them all debut on the steps of the Rotunda to see which is your favorite."});
-        itemList.add(new String[] {"Eat a Gus Burger", "Though I don't recommend it for the taste, getting a Gus Burger from the White Spot is a tradition very old and true at the University."});
-        itemList.add(new String[] {"Swim at Blue Hole", "Go take a drive to the depths of nature and take a two mile hike to this wonderful waterfall swimming area!"});
-        itemList.add(new String[] {"Chow Down at Crozet Pizza", "And by this, we mean the ORIGINAL Crozet Pizza.  Though the one on the Corner is still delicious and has great drink options, the original is worth the trek."});
-        itemList.add(new String[] {"Attend Restoration Ball", "This annual event hosted by the Jefferson Literary and Debating Society brings people from all over the University together for a formal ball, and Dean Groves may teach the Virginia Reel."});
-        itemList.add(new String[] {"Go to a Frat Party", "You may think these are for the younger generations, but relive your first year weekend nights by taking a stroll down Rugby Road and walk through an overcrowded house that reeks of kegs and old pizza."});
-        itemList.add(new String[] {"Make a Purchase at Shady Grady", "Remember that place down on Preston Ave that was the only place that didn't care about IDs? It is still there and still just as shady."});
-        itemList.add(new String[] {"Nab the #1 Ticket at Bodo's", "Get up early and snag the first Bodo's ticket.  Thousands of customers come to this corner shop every day.  Can you beat the crowd?"});
-        itemList.add(new String[] {"Dining Hall Marathon", "Go eat at all three dining halls in one day!"});
-        itemList.add(new String[] {"See a Horse at Foxfield", "Going to Foxfield can be a blast, but make sure you try to remember to see a horse! It is a race after all"});
-        itemList.add(new String[] {"Paint Beta Bridge", "Beta Bridge has een painted over so many times that it has almost half a foot of paint built up on its walls.  Leave your mark on this landmark!"});
-        itemList.add(new String[] {"Take a Professor to Lunch", "You sit in their class.  You may visit their Office Hours.  But to really have the UVA experience Jefferson wanted, get to know them with a free lunch (yes, ODOS gives you the money)."});
-        itemList.add(new String[] {"Play in Mad Bowl", "Don't let that beautiful pit go to waste.  Grab some friends and a ball of some sort and play a game to enjoy a nice day, or wait til it snows and bring a sled."});
-        itemList.add(new String[] {"Go Streaking", "A tradition for the past 40 years, the academical village serves a perfect place for a late night run."});
-        itemList.add(new String[] {"Eat at Bellair Market", "Just a little trip down Ivy, this small gas station has amazing sandwiches.  Recommendation: the Ednam"});
-        itemList.add(new String[] {"Go to Rotunda Sing", "UVA has tons of talented A Capella groups.  Hear them all debut on the steps of the Rotunda to see which is your favorite."});
-        itemList.add(new String[] {"Eat a Gus Burger", "Though I don't recommend it for the taste, getting a Gus Burger from the White Spot is a tradition very old and true at the University."});
-        itemList.add(new String[] {"Swim at Blue Hole", "Go take a drive to the depths of nature and take a two mile hike to this wonderful waterfall swimming area!"});
-        itemList.add(new String[] {"Chow Down at Crozet Pizza", "And by this, we mean the ORIGINAL Crozet Pizza.  Though the one on the Corner is still delicious and has great drink options, the original is worth the trek."});
-        itemList.add(new String[] {"Attend Restoration Ball", "This annual event hosted by the Jefferson Literary and Debating Society brings people from all over the University together for a formal ball, and Dean Groves may teach the Virginia Reel."});
-        itemList.add(new String[] {"Go to a Frat Party", "You may think these are for the younger generations, but relive your first year weekend nights by taking a stroll down Rugby Road and walk through an overcrowded house that reeks of kegs and old pizza."});
-        itemList.add(new String[] {"Make a Purchase at Shady Grady", "Remember that place down on Preston Ave that was the only place that didn't care about IDs? It is still there and still just as shady."});
-
-    }
-
-
 
 }
