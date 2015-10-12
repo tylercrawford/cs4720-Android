@@ -18,25 +18,10 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-//import com.google.android.gms.common.ConnectionResult;
-//import com.google.android.gms.common.api.GoogleApiClient;
-//import com.google.android.gms.location.LocationServices;
-//import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-//import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-
 import java.util.ArrayList;
 import java.util.Random;
 
-//public class MainActivity extends AppCompatActivity implements
-//        ConnectionCallbacks, OnConnectionFailedListener{
 public class MainActivity extends AppCompatActivity {
-
-//    protected GoogleApiClient mGoogleApiClient;
-
-//    protected Location mLastLocation;
-//    protected String mLatitudeText;
-//    protected String mLongitudeText;
 
     ArrayList<String> itemList = new ArrayList<String>();
     ArrayList<String[]> itemList2 = new ArrayList<String[]>();
@@ -50,23 +35,10 @@ public class MainActivity extends AppCompatActivity {
     LocationManager mlocManager;
     LocationListener mlocListener;
 
-
-//    protected synchronized void buildGoogleApiClient() {
-//        mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                .addConnectionCallbacks(this)
-//                .addOnConnectionFailedListener(this)
-//                .addApi(LocationServices.API)
-//                .build();
-//    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ItemActivityRequestCode && resultCode == RESULT_OK && data != null) {
             String number = data.getStringExtra("item_completed");
-//            Context context = getApplicationContext();
-//            int duration = Toast.LENGTH_SHORT;
-//            Toast toast = Toast.makeText(context, name, duration);
-//            toast.show();
             int position = Integer.parseInt(number);
             String oldText = itemList.get(position);
             itemList.set(position, oldText + " (Completed)");
@@ -132,39 +104,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        // Handle Profile Section
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            //TextView text = (TextView) findViewById(R.id.profile_name);
-            //text.setText("Hello "+ username);
-            TextView prof_username = (TextView) findViewById(R.id.profile_username);
-            TextView numCompleted = (TextView) findViewById(R.id.profile_numTasks);
-            prof_username.setText(prof_username.getText() + username);
-
-            Cursor rs;
-            int taskCount = 0;
-            int numRows = mydb.numberOfRows(username);
-            for (int i = 1; i <= numRows; i++) {
-                rs = mydb.getData(i, username);
-                rs.moveToFirst();
-                String completed = rs.getString(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_COMPLETED));
-                if (completed.equals("Completed!")) {
-                    taskCount++;
-                }
-
-                if (!rs.isClosed()) {
-                    rs.close();
-                }
-            }
-
-            numCompleted.setText(numCompleted.getText() + "" + taskCount);
-        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-//        mGoogleApiClient.connect();
     }
 
     @Override
@@ -177,26 +121,24 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int id_To_Search = position + 1;
+            int id_To_Search = position + 1;
 
-                Bundle dataBundle = new Bundle();
-                dataBundle.putInt("id", id_To_Search);
-                dataBundle.putString("username", username);
+            Bundle dataBundle = new Bundle();
+            dataBundle.putInt("id", id_To_Search);
+            dataBundle.putString("username", username);
 
-                Intent intent = new Intent(getApplicationContext(), ItemActivity.class);
+            Intent intent = new Intent(getApplicationContext(), ItemActivity.class);
 
-                intent.putExtras(dataBundle);
-                startActivity(intent);
+            intent.putExtras(dataBundle);
+            startActivity(intent);
             }
         });
 
         // Handle Profile Section
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            //TextView text = (TextView) findViewById(R.id.profile_name);
-            //text.setText("Hello "+ username);
             TextView prof_username = (TextView) findViewById(R.id.profile_username);
             TextView numCompleted = (TextView) findViewById(R.id.profile_numTasks);
-            prof_username.setText(prof_username.getText() + username);
+            prof_username.setText("Username: " + username);
 
             Cursor rs;
             int taskCount = 0;
@@ -214,19 +156,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            numCompleted.setText(numCompleted.getText() + "" + taskCount);
+            numCompleted.setText("Tasks completes: " + taskCount + "/100");
         }
     }
 
     @Override
     protected void onStop() {
-
         super.onStop();
-
-//        super.onStop();
-//        if (mGoogleApiClient.isConnected()) {
-//            mGoogleApiClient.disconnect();
-//        }
     }
 
     @Override

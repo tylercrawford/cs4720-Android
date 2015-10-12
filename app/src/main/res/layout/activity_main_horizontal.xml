@@ -68,15 +68,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Username: " />
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
         <TextView android:id="@+id/profile_numTasks"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Tasks completed: " />
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
         <TextView android:id="@+id/profile_name"
             android:layout_height="wrap_content"
