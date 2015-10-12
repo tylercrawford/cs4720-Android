@@ -70,6 +70,12 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Profile" />
 
+        <ImageView android:id="@+id/prof_img"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_centerHorizontal="true"
+            android:src="@mipmap/rotunda_logo" />
+
         <TextView android:id="@+id/profile_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

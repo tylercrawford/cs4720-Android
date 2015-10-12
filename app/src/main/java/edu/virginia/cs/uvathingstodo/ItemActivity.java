@@ -110,7 +110,6 @@ public class ItemActivity extends AppCompatActivity {
                 completed_view.setText(completed);
 
                 if (image_exists == 1) {
-                    //Toast.makeText(getApplicationContext(), image_array.toString(), Toast.LENGTH_SHORT).show();
                     Bitmap bp = BitmapFactory.decodeByteArray(image_array, 0, image_array.length);
                     image.setImageBitmap(bp);
                 }

@@ -174,5 +174,6 @@ public class RegisterUserActivity extends AppCompatActivity {
 
         image = (Bitmap) data.getExtras().get("data");
         imageview.setImageBitmap(image);
+        imageTaken = true;
     }
 }
