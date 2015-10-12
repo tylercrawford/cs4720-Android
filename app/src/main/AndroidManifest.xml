@@ -34,6 +34,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ProfileActivity"
+            android:label="100 Things To Do at UVA Before You Graduate" >
+        </activity>
     </application>
 
 </manifest>

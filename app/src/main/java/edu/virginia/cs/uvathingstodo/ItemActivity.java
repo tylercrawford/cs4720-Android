@@ -132,9 +132,18 @@ public class ItemActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.logout) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        } else if (id == R.id.profile) {
+            Bundle dataBundle = new Bundle();
+            dataBundle.putString("username", username);
+
+            Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+
+            intent.putExtras(dataBundle);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

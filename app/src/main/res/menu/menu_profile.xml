@@ -1,11 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ItemActivity">
-    <item android:id="@+id/profile"
-        android:title="Profile"
-        app:showAsAction="never" />
-    <item android:id="@+id/logout"
+    tools:context="edu.virginia.cs.uvathingstodo.ProfileActivity">
+    <item android:id="@+id/profile_logout"
         android:title="Logout"
         app:showAsAction="never" />
 </menu>
