@@ -40,6 +40,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         TextView prof_username = (TextView) findViewById(R.id.profile_username_portrait);
         TextView numCompleted = (TextView) findViewById(R.id.profile_numTasks_portrait);
+        TextView yearText = (TextView) findViewById(R.id.profile_year);
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar_portrait);
         ImageView image = (ImageView) findViewById(R.id.prof_img);
 
@@ -69,6 +70,8 @@ public class ProfileActivity extends AppCompatActivity {
                 imgExists = true;
                 image_array = userCursor.getBlob(userCursor.getColumnIndex("image"));
             }
+            yearText.setText(userCursor.getString(userCursor.getColumnIndex("year")));
+
 
         }
 

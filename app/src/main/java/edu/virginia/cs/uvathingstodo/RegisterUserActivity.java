@@ -1,6 +1,7 @@
 package edu.virginia.cs.uvathingstodo;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -33,7 +34,13 @@ public class RegisterUserActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register_user);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setContentView(R.layout.activity_register_user_horizontal);
+        }
+        else {
+            setContentView(R.layout.activity_register_user);
+        }
         username = (TextView) findViewById(R.id.register_username);
         password = (TextView) findViewById(R.id.register_password);
         password2 = (TextView) findViewById(R.id.register_password2);
@@ -172,8 +179,10 @@ public class RegisterUserActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        image = (Bitmap) data.getExtras().get("data");
-        imageview.setImageBitmap(image);
-        imageTaken = true;
+        if (resultCode != 0) {
+            image = (Bitmap) data.getExtras().get("data");
+            imageview.setImageBitmap(image);
+            imageTaken = true;
+        }
     }
 }

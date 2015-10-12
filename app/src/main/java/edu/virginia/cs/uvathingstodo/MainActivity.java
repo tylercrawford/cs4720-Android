@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             TextView prof_username = (TextView) findViewById(R.id.profile_username);
             TextView numCompleted = (TextView) findViewById(R.id.profile_numTasks);
+            TextView yearText = (TextView) findViewById(R.id.profile_year);
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
             ImageView image = (ImageView) findViewById(R.id.prof_img);
 
@@ -173,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
                     imgExists = true;
                     image_array = userCursor.getBlob(userCursor.getColumnIndex("image"));
                 }
+                yearText.setText(userCursor.getString(userCursor.getColumnIndex("year")));
 
             }
 
