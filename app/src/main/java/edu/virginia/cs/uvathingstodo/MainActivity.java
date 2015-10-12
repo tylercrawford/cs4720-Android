@@ -1,8 +1,11 @@
 package edu.virginia.cs.uvathingstodo;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,25 +18,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-
-import org.w3c.dom.Text;
+//import com.google.android.gms.common.ConnectionResult;
+//import com.google.android.gms.common.api.GoogleApiClient;
+//import com.google.android.gms.location.LocationServices;
+//import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+//import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements
-        ConnectionCallbacks, OnConnectionFailedListener{
+//public class MainActivity extends AppCompatActivity implements
+//        ConnectionCallbacks, OnConnectionFailedListener{
+public class MainActivity extends AppCompatActivity {
 
-    protected GoogleApiClient mGoogleApiClient;
+//    protected GoogleApiClient mGoogleApiClient;
 
-    protected Location mLastLocation;
-    protected String mLatitudeText;
-    protected String mLongitudeText;
+//    protected Location mLastLocation;
+//    protected String mLatitudeText;
+//    protected String mLongitudeText;
 
     ArrayList<String> itemList = new ArrayList<String>();
     ArrayList<String[]> itemList2 = new ArrayList<String[]>();
@@ -44,13 +46,17 @@ public class MainActivity extends AppCompatActivity implements
     DBHelper mydb;
     String username;
 
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-    }
+    LocationManager mlocManager;
+    LocationListener mlocListener;
+
+
+//    protected synchronized void buildGoogleApiClient() {
+//        mGoogleApiClient = new GoogleApiClient.Builder(this)
+//                .addConnectionCallbacks(this)
+//                .addOnConnectionFailedListener(this)
+//                .addApi(LocationServices.API)
+//                .build();
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -79,8 +85,15 @@ public class MainActivity extends AppCompatActivity implements
             setContentView(R.layout.activity_main);
         }
 
-        buildGoogleApiClient();
-        mGoogleApiClient.connect();
+        mlocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        mlocListener = new MyLocationListener();
+
+        try {
+            mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
+        }
+        catch (SecurityException se) {
+
+        }
 
         Bundle extras = getIntent().getExtras();
         if(extras != null) {
@@ -129,15 +142,54 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+//        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ArrayList array_list = mydb.getAllItems(username);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, array_list);
+        listView = (ListView)findViewById(R.id.listView1);
+        listView.setAdapter(arrayAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int id_To_Search = position + 1;
+
+                Bundle dataBundle = new Bundle();
+                dataBundle.putInt("id", id_To_Search);
+                dataBundle.putString("username", username);
+
+                Intent intent = new Intent(getApplicationContext(), ItemActivity.class);
+
+                intent.putExtras(dataBundle);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
     protected void onStop() {
+
         super.onStop();
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
+
+//        super.onStop();
+//        if (mGoogleApiClient.isConnected()) {
+//            mGoogleApiClient.disconnect();
+//        }
+    }
+
+    @Override
+    protected  void onDestroy() {
+        mlocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        try {
+            mlocManager.removeUpdates(mlocListener);
         }
+        catch (SecurityException se) {
+
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -174,65 +226,6 @@ public class MainActivity extends AppCompatActivity implements
 
         intent.putExtras(dataBundle);
         startActivity(intent);
-    }
-
-
-
-//    public void getLocation(View view) {
-//        EditText editText = (EditText) findViewById(R.id.edit_name);
-//        Context context = getApplicationContext();
-//        String name = editText.getText().toString();
-//        int duration = Toast.LENGTH_SHORT;
-//
-//        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-//        if (mLastLocation != null) {
-//            mLatitudeText = (String.valueOf(mLastLocation.getLatitude()));
-//            mLongitudeText = (String.valueOf(mLastLocation.getLongitude()));
-//        }
-//
-//        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-//        try {
-//            Location l = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//            if (l != null) {
-//                Toast.makeText(this, "Location is " + l.getLatitude() + " " + l.getLongitude(), Toast.LENGTH_LONG).show();
-//            } else {
-//                Toast.makeText(this, "Location is null", Toast.LENGTH_LONG).show();
-//            }
-//        }
-//        catch (SecurityException se) {
-//
-//        }
-//
-//    }
-
-    /**
-     * Runs when a GoogleApiClient object successfully connects.
-     */
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLastLocation != null) {
-            mLatitudeText = (String.valueOf(mLastLocation.getLatitude()));
-            mLongitudeText = (String.valueOf(mLastLocation.getLongitude()));
-        } else {
-            //Toast.makeText(this, "No Location", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult result) {
-        // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
-        // onConnectionFailed.
-        //Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
-    }
-
-
-    @Override
-    public void onConnectionSuspended(int cause) {
-        // The connection to Google Play services was lost for some reason. We call connect() to
-        // attempt to re-establish the connection.
-        //Log.i(TAG, "Connection suspended");
-        mGoogleApiClient.connect();
     }
 
     public void addItems() {
@@ -272,4 +265,35 @@ public class MainActivity extends AppCompatActivity implements
             itemList.add(itemList2.get(i)[0]);
         }
     }
+
+    public class MyLocationListener implements LocationListener
+    {
+        @Override
+        public void onLocationChanged(Location loc)
+        {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider)
+        {
+            Toast.makeText( getApplicationContext(),
+                    "Gps Disabled",
+                    Toast.LENGTH_SHORT ).show();
+        }
+
+        @Override
+        public void onProviderEnabled(String provider)
+        {
+            Toast.makeText(getApplicationContext(),
+                    "Gps Enabled",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras)
+        {
+
+        }
+    }/* End of Class MyLocationListener */
 }
