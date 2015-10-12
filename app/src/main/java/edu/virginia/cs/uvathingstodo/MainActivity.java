@@ -132,33 +132,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        // Handle Profile Section
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            //TextView text = (TextView) findViewById(R.id.profile_name);
-            //text.setText("Hello "+ username);
-            TextView prof_username = (TextView) findViewById(R.id.profile_username);
-            TextView numCompleted = (TextView) findViewById(R.id.profile_numTasks);
-            prof_username.setText(prof_username.getText() + username);
-
-            Cursor rs;
-            int taskCount = 0;
-            int numRows = mydb.numberOfRows(username);
-            for (int i = 1; i <= numRows; i++) {
-                rs = mydb.getData(i, username);
-                rs.moveToFirst();
-                String completed = rs.getString(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_COMPLETED));
-                if (completed.equals("Completed!")) {
-                    taskCount++;
-                }
-
-                if (!rs.isClosed()) {
-                    rs.close();
-                }
-            }
-
-            numCompleted.setText(numCompleted.getText() + "" + taskCount);
-        }
     }
 
     @Override
