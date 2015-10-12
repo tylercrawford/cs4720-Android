@@ -1,11 +1,12 @@
 package edu.virginia.cs.uvathingstodo;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.location.LocationManager;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,7 +18,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Random;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class ItemActivity extends AppCompatActivity {
 
@@ -30,12 +33,12 @@ public class ItemActivity extends AppCompatActivity {
     TextView title_view;
     TextView description_view;
     TextView completed_view;
-    TextView latitude_view;
-    TextView longitude_view;
+    TextView location_view;
     TextView date_view;
     int id_To_Update = 0;
     Button camera_button;
     ImageView image;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,8 @@ public class ItemActivity extends AppCompatActivity {
         title_view = (TextView) findViewById(R.id.title_field);
         description_view = (TextView) findViewById(R.id.description_field);
         completed_view = (TextView) findViewById(R.id.completed_field);
+        location_view = (TextView) findViewById(R.id.location_field);
+        date_view = (TextView) findViewById(R.id.date_field);
 
         camera_button = (Button) findViewById(R.id.camera_button);
         image = (ImageView) findViewById(R.id.imageView);
@@ -76,24 +81,31 @@ public class ItemActivity extends AppCompatActivity {
                 String title = rs.getString(rs.getColumnIndex(DBHelper.ITEMS_COULMN_TITLE));
                 String description = rs.getString(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_DESCRIPTION));
                 String completed = rs.getString(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_COMPLETED));
-////                double longitude = rs.getDouble(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_LONGITUDE));
-////                double latitude = rs.getDouble(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_LATITUDE));
-////                String date = rs.getString(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_DATE));
+                double longitude = rs.getDouble(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_LONGITUDE));
+                double latitude = rs.getDouble(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_LATITUDE));
+                String date = rs.getString(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_DATE));
                 byte[] image_array = rs.getBlob(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_IMAGE));
                 int image_exists = rs.getInt(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_IMAGE_EXISTS));
-//
+
                 if (!rs.isClosed()) {
                     rs.close();
                 }
 
                 if (completed.equals("Completed!")) {
-                    Toast.makeText(getApplicationContext(), "debhebd", Toast.LENGTH_SHORT).show();
-                    Button b = (Button) findViewById(R.id.button);
+                    Button b = (Button) findViewById(R.id.completed_button);
                     b.setVisibility(View.GONE);
+
+                    location_view.setText("Longitude: " + longitude + " \nLatitude: " + latitude);
+                    date_view.setText("Completed: " + date);
                 }
-////
+                else {
+                    camera_button.setVisibility(View.GONE);
+                    location_view.setVisibility(View.GONE);
+                    date_view.setVisibility(View.GONE);
+
+                }
+
                 title_view.setText(title);
-                //title_view.setTextColor(Color.parseColor("#FF9900"));
                 description_view.setText(description);
                 completed_view.setText(completed);
 
@@ -139,24 +151,53 @@ public class ItemActivity extends AppCompatActivity {
 
     public void completedItem(View view) {
         Bundle extras = getIntent().getExtras();
+
+        double longitude = 0;
+        double latitude = 0;
+
+        String date;
+
         if(extras != null) {
             int Value = extras.getInt("id");
             if (Value > 0) {
-                if(mydb.updateItem(id_To_Update, title_view.getText().toString(), description_view.getText().toString(), "Completed!", 0, 0, "Today", "", username)) {
-                    Toast.makeText(getApplicationContext(), "Completed " + title_view.getText().toString(), Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    Bundle dataBundle = new Bundle();
-                    dataBundle.putString("username", username);
+                LocationManager mlocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
-                    intent.putExtras(dataBundle);
+                try {
+                    Location l = mlocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    if (l != null) {
+                        longitude = l.getLongitude();
+                        latitude = l.getLatitude();
+                    } else {
+                       // Toast.makeText(this, "Location is null", Toast.LENGTH_LONG).show();
+                    }
+                }
+                catch (SecurityException se) {
 
-                    startActivity(intent);
+                }
+
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy HH:mm:ss ");
+
+                date = sdf.format(c.getTime());
+
+                if(mydb.updateItem(id_To_Update, title_view.getText().toString(), description_view.getText().toString(), "Completed!", longitude, latitude, date, "", username)) {
+                    Button b = (Button) findViewById(R.id.completed_button);
+                    b.setVisibility(View.GONE);
+
+                    location_view.setText("Longitude: " + longitude + " \nLatitude: " + latitude);
+                    date_view.setText("Completed: " + date);
+                    completed_view.setText("Completed!");
+
+                    camera_button.setVisibility(View.VISIBLE);
+                    location_view.setVisibility(View.VISIBLE);
+                    date_view.setVisibility(View.VISIBLE);
+
+
                 }
                 else {
                     Toast.makeText(getApplicationContext(), "Failed Updating", Toast.LENGTH_SHORT).show();
                 }
             }
         }
-
     }
 }
