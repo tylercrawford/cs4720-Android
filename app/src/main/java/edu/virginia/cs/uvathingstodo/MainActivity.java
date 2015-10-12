@@ -1,10 +1,15 @@
 package edu.virginia.cs.uvathingstodo;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -121,8 +126,29 @@ public class MainActivity extends AppCompatActivity implements
 
         // Handle Profile Section
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            TextView text = (TextView) findViewById(R.id.profile_name);
-            text.setText("Hello "+ username);
+            //TextView text = (TextView) findViewById(R.id.profile_name);
+            //text.setText("Hello "+ username);
+            TextView prof_username = (TextView) findViewById(R.id.profile_username);
+            TextView numCompleted = (TextView) findViewById(R.id.profile_numTasks);
+            prof_username.setText(prof_username.getText() + username);
+
+            Cursor rs;
+            int taskCount = 0;
+            int numRows = mydb.numberOfRows(username);
+            for (int i = 1; i <= numRows; i++) {
+                rs = mydb.getData(i, username);
+                rs.moveToFirst();
+                String completed = rs.getString(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_COMPLETED));
+                if (completed.equals("Completed!")) {
+                    taskCount++;
+                }
+
+                if (!rs.isClosed()) {
+                    rs.close();
+                }
+            }
+
+            numCompleted.setText(numCompleted.getText() + "" + taskCount);
         }
     }
 
@@ -157,6 +183,12 @@ public class MainActivity extends AppCompatActivity implements
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+
+        if (id == R.id.logout) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
