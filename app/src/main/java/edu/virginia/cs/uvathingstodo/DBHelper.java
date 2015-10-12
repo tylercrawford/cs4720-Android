@@ -7,8 +7,10 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 
@@ -17,7 +19,7 @@ import java.util.ArrayList;
  */
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final String DATABASE_NAME = "TestDatabase4.db";
+    public static final String DATABASE_NAME = "TestDatabase5.db";
     public static final String ITEMS_TABLE_NAME = "items";
     public static final String ITEMS_COLUMN_ID = "id";
     public static final String ITEMS_COULMN_TITLE = "title";
@@ -27,6 +29,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String ITEMS_COLUMN_LONGITUDE = "longitude";
     public static final String ITEMS_COLUMN_DATE = "date";
     public static final String ITEMS_COLUMN_IMAGE = "image";
+    public static final String ITEMS_COLUMN_IMAGE_EXISTS = "image_exists";
 
     private ArrayList<String[]> itemList = new ArrayList<String[]>();
 
@@ -38,7 +41,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db){
         db.execSQL(
                 "create table items " +
-                        "(id integer primary key, title text, description text, completed text, latitude real, longitude real, date text, image blob)"
+                        "(id integer primary key, title text, description text, completed text, latitude real, longitude real, date text, image blob, image_exists integer)"
         );
         db.execSQL(
                 "create table users " +
@@ -71,7 +74,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String table_name = username+"_items";
         db.execSQL(
                 "create table " + table_name + " " +
-                        "(id integer primary key, title text, description text, completed text, latitude real, longitude real, date text, image blob)"
+                        "(id integer primary key, title text, description text, completed text, latitude real, longitude real, date text, image blob, image_exists integer)"
         );
         return true;
     }
@@ -87,6 +90,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(ITEMS_COLUMN_LONGITUDE, 0);
         contentValues.put(ITEMS_COLUMN_DATE, "");
         contentValues.put(ITEMS_COLUMN_IMAGE, "");
+        contentValues.put(ITEMS_COLUMN_IMAGE_EXISTS, 0);
         db.insert(table_name, null, contentValues);
         return true;
     }
@@ -128,10 +132,27 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(ITEMS_COLUMN_LATITUDE, lat);
         contentValues.put(ITEMS_COLUMN_LONGITUDE, lon);
         contentValues.put(ITEMS_COLUMN_DATE, date);
-        contentValues.put(ITEMS_COLUMN_IMAGE, img);
         db.update(table_name, contentValues, "id = ? ", new String[] { Integer.toString(id)} );
         return  true;
     }
+
+    public boolean insertImage(Integer id, String username, Bitmap img) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String table_name = username + "_items";
+        ContentValues contentValues = new ContentValues();
+
+        // convert Bitmap to Byte[]
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        img.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+
+        contentValues.put(ITEMS_COLUMN_IMAGE, byteArray);
+        contentValues.put(ITEMS_COLUMN_IMAGE_EXISTS, 1);
+        db.update(table_name, contentValues, "id = ? ", new String[] { Integer.toString(id)} );
+        return  true;
+
+    }
+
 
     public Integer deleteItem (Integer id, String username) {
         SQLiteDatabase db = this.getWritableDatabase();

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -77,7 +78,8 @@ public class ItemActivity extends AppCompatActivity {
 ////                double longitude = rs.getDouble(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_LONGITUDE));
 ////                double latitude = rs.getDouble(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_LATITUDE));
 ////                String date = rs.getString(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_DATE));
-//                //byte[] image = rs.getBlob(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_IMAGE));
+                byte[] image_array = rs.getBlob(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_IMAGE));
+                int image_exists = rs.getInt(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_IMAGE_EXISTS));
 //
                 if (!rs.isClosed()) {
                     rs.close();
@@ -92,6 +94,12 @@ public class ItemActivity extends AppCompatActivity {
                 title_view.setText(title);
                 description_view.setText(description);
                 completed_view.setText(completed);
+
+                if (image_exists == 1) {
+                    //Toast.makeText(getApplicationContext(), image_array.toString(), Toast.LENGTH_SHORT).show();
+                    Bitmap bp = BitmapFactory.decodeByteArray(image_array, 0, image_array.length);
+                    image.setImageBitmap(bp);
+                }
             }
         }
     }
@@ -124,6 +132,7 @@ public class ItemActivity extends AppCompatActivity {
 
         Bitmap bp = (Bitmap) data.getExtras().get("data");
         image.setImageBitmap(bp);
+        mydb.insertImage(id_To_Update, username, bp);
     }
 
     public void completedItem(View view) {

@@ -1,6 +1,7 @@
 package edu.virginia.cs.uvathingstodo;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -68,7 +71,13 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setContentView(R.layout.activity_main_horizontal);
+        }
+        else {
+            setContentView(R.layout.activity_main);
+        }
 
         buildGoogleApiClient();
         mGoogleApiClient.connect();
@@ -109,6 +118,12 @@ public class MainActivity extends AppCompatActivity implements
                 startActivity(intent);
             }
         });
+
+        // Handle Profile Section
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            TextView text = (TextView) findViewById(R.id.profile_name);
+            text.setText("Hello "+ username);
+        }
     }
 
     @Override
