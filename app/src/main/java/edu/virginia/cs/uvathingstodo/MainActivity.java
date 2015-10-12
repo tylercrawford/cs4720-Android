@@ -173,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
                     imgExists = true;
                     image_array = userCursor.getBlob(userCursor.getColumnIndex("image"));
                 }
+
             }
 
             if (imgExists) {
