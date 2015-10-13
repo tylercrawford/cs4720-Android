@@ -3,10 +3,13 @@ package edu.virginia.cs.uvathingstodo;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +40,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         TextView prof_username = (TextView) findViewById(R.id.profile_username_portrait);
         TextView numCompleted = (TextView) findViewById(R.id.profile_numTasks_portrait);
+        TextView yearText = (TextView) findViewById(R.id.profile_year);
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar_portrait);
+        ImageView image = (ImageView) findViewById(R.id.prof_img);
 
         prof_username.setText("Username: " + username);
 
@@ -55,6 +60,24 @@ public class ProfileActivity extends AppCompatActivity {
             if (!rs.isClosed()) {
                 rs.close();
             }
+        }
+
+        boolean imgExists = false;
+        byte[] image_array = null;
+        Cursor userCursor = mydb.getUserData(username);
+        if (userCursor.moveToFirst()) {
+            if (userCursor.getInt(userCursor.getColumnIndex("image_exists")) == 1) {
+                imgExists = true;
+                image_array = userCursor.getBlob(userCursor.getColumnIndex("image"));
+            }
+            yearText.setText(userCursor.getString(userCursor.getColumnIndex("year")));
+
+
+        }
+
+        if (imgExists) {
+            Bitmap bp = BitmapFactory.decodeByteArray(image_array, 0, image_array.length);
+            image.setImageBitmap(bp);
         }
 
         numCompleted.setText("Tasks completed: " + taskCount + "/100");

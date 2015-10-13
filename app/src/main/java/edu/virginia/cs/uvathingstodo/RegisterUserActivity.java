@@ -1,14 +1,18 @@
 package edu.virginia.cs.uvathingstodo;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,17 +22,40 @@ public class RegisterUserActivity extends AppCompatActivity {
     TextView password;
     TextView password2;
     Button register_button;
+    Button camera_button;
     DBHelper mydb;
+
+    Bitmap image;
+    ImageView imageview;
+
+    String year = "4th year";
+    boolean imageTaken = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register_user);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setContentView(R.layout.activity_register_user_horizontal);
+        }
+        else {
+            setContentView(R.layout.activity_register_user);
+        }
         username = (TextView) findViewById(R.id.register_username);
         password = (TextView) findViewById(R.id.register_password);
         password2 = (TextView) findViewById(R.id.register_password2);
         register_button = (Button) findViewById(R.id.register_submit);
+        camera_button = (Button) findViewById(R.id.camera_button);
+        imageview = (ImageView) findViewById(R.id.imageView);
         mydb = new DBHelper(this);
+
+        camera_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, 0);
+            }
+        });
 
         register_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,7 +113,12 @@ public class RegisterUserActivity extends AppCompatActivity {
                     password2.setHint("Retype Password");
                     Toast.makeText(getApplicationContext(), "Passwords must match", Toast.LENGTH_SHORT).show();
                 } else {
-                    mydb.registerUser(username_field, password_field);
+                    if (imageTaken) {
+                        mydb.registerUserWithImg(username_field, password_field, year, image);
+                    } else {
+                        mydb.registerUserWithoutImg(username_field, password_field, year);
+                    }
+
                     Bundle dataBundle = new Bundle();
                     dataBundle.putString("username", username_field);
 
@@ -100,6 +132,32 @@ public class RegisterUserActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void onRadioButtonClicked(View view) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
+
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.radio_1st:
+                if (checked)
+                    year = "1st year";
+                break;
+            case R.id.radio_2nd:
+                if (checked)
+                    year = "2nd year";
+                break;
+            case R.id.radio_3rd:
+                if (checked)
+                    year = "3rd year";
+                break;
+            case R.id.radio_4th:
+                if (checked)
+                    year = "4th year";
+                break;
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -116,5 +174,15 @@ public class RegisterUserActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         return super.onOptionsItemSelected(item);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode != 0) {
+            image = (Bitmap) data.getExtras().get("data");
+            imageview.setImageBitmap(image);
+            imageTaken = true;
+        }
     }
 }

@@ -70,11 +70,25 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Profile" />
 
+        <ImageView android:id="@+id/prof_img"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_centerHorizontal="true"
+            android:src="@mipmap/default_image" />
+
         <TextView android:id="@+id/profile_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:textAppearance="?android:attr/textAppearanceMedium"/>
+        <TextView android:id="@+id/profile_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Year"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_gravity="center_horizontal" />
+
 
         <TextView android:id="@+id/profile_numTasks"
             android:layout_width="match_parent"

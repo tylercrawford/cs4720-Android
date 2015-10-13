@@ -110,7 +110,6 @@ public class ItemActivity extends AppCompatActivity {
                 completed_view.setText(completed);
 
                 if (image_exists == 1) {
-                    //Toast.makeText(getApplicationContext(), image_array.toString(), Toast.LENGTH_SHORT).show();
                     Bitmap bp = BitmapFactory.decodeByteArray(image_array, 0, image_array.length);
                     image.setImageBitmap(bp);
                 }
@@ -136,14 +135,6 @@ public class ItemActivity extends AppCompatActivity {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
-        } else if (id == R.id.profile) {
-            Bundle dataBundle = new Bundle();
-            dataBundle.putString("username", username);
-
-            Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-
-            intent.putExtras(dataBundle);
-            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -153,9 +144,11 @@ public class ItemActivity extends AppCompatActivity {
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
 
-        Bitmap bp = (Bitmap) data.getExtras().get("data");
-        image.setImageBitmap(bp);
-        mydb.insertImage(id_To_Update, username, bp);
+        if (resultCode != 0) {
+            Bitmap bp = (Bitmap) data.getExtras().get("data");
+            image.setImageBitmap(bp);
+            mydb.insertImage(id_To_Update, username, bp);
+        }
     }
 
     public void completedItem(View view) {
@@ -189,7 +182,7 @@ public class ItemActivity extends AppCompatActivity {
 
                 date = sdf.format(c.getTime());
 
-                if(mydb.updateItem(id_To_Update, title_view.getText().toString(), description_view.getText().toString(), "Completed!", longitude, latitude, date, "", username)) {
+                if(mydb.updateItem(id_To_Update, title_view.getText().toString(), description_view.getText().toString(), "Completed!", latitude, longitude, date, "", username)) {
                     Button b = (Button) findViewById(R.id.completed_button);
                     b.setVisibility(View.GONE);
 
