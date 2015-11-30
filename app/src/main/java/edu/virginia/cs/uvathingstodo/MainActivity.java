@@ -51,6 +51,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        // disable back on main screen
+        // user must log out
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

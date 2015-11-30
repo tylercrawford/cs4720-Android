@@ -24,8 +24,19 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        Bundle extras = getIntent().getExtras();
+        if(extras != null) {
+            username = extras.getString("username");
+        }
+
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            finish();
+            Bundle dataBundle = new Bundle();
+            dataBundle.putString("username", username);
+
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+
+            intent.putExtras(dataBundle);
+            startActivity(intent);
         }
     }
 

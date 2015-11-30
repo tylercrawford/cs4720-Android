@@ -30,6 +30,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String ITEMS_COLUMN_DATE = "date";
     public static final String ITEMS_COLUMN_IMAGE = "image";
     public static final String ITEMS_COLUMN_IMAGE_EXISTS = "image_exists";
+    public static final String ITEMS_COLUMN_TWEET_POSTED = "tweet_posted";
 
     private ArrayList<String[]> itemList = new ArrayList<String[]>();
 
@@ -41,7 +42,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db){
         db.execSQL(
                 "create table items " +
-                        "(id integer primary key, title text, description text, completed text, latitude real, longitude real, date text, image blob, image_exists integer)"
+                        "(id integer primary key, title text, description text, completed text, latitude real, longitude real, date text, image blob, image_exists integer, tweet_posted integer)"
         );
         db.execSQL(
                 "create table users " +
@@ -79,7 +80,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String table_name = username+"_items";
         db.execSQL(
                 "create table " + table_name + " " +
-                        "(id integer primary key, title text, description text, completed text, latitude real, longitude real, date text, image blob, image_exists integer)"
+                        "(id integer primary key, title text, description text, completed text, latitude real, longitude real, date text, image blob, image_exists integer, tweet_posted integer)"
         );
         return true;
     }
@@ -97,7 +98,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String table_name = username+"_items";
         db.execSQL(
                 "create table " + table_name + " " +
-                        "(id integer primary key, title text, description text, completed text, latitude real, longitude real, date text, image blob, image_exists integer)"
+                        "(id integer primary key, title text, description text, completed text, latitude real, longitude real, date text, image blob, image_exists integer, tweet_posted integer)"
         );
         return true;
     }
@@ -114,6 +115,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(ITEMS_COLUMN_DATE, "");
         contentValues.put(ITEMS_COLUMN_IMAGE, "");
         contentValues.put(ITEMS_COLUMN_IMAGE_EXISTS, 0);
+        contentValues.put(ITEMS_COLUMN_TWEET_POSTED, 0);
         db.insert(table_name, null, contentValues);
         return true;
     }
@@ -145,7 +147,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return  numRows;
     }
 
-    public boolean updateItem (Integer id, String title, String description, String completed, double lat, double lon, String date, String img, String username) {
+    public boolean updateItem (Integer id, String title, String description, String completed, double lat, double lon, String date, String img, String username, int tweet) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         String table_name = username + "_items";
@@ -155,8 +157,19 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(ITEMS_COLUMN_LATITUDE, lat);
         contentValues.put(ITEMS_COLUMN_LONGITUDE, lon);
         contentValues.put(ITEMS_COLUMN_DATE, date);
+        contentValues.put(ITEMS_COLUMN_TWEET_POSTED, tweet);
         db.update(table_name, contentValues, "id = ? ", new String[] { Integer.toString(id)} );
         return  true;
+    }
+
+    public boolean postTweet(Integer id, String username) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String table_name = username + "_items";
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ITEMS_COLUMN_TWEET_POSTED, 1);
+        db.update(table_name, contentValues, "id = ? ", new String[]{Integer.toString(id)});
+        return  true;
+
     }
 
     public boolean insertImage(Integer id, String username, Bitmap img) {

@@ -22,6 +22,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
+import twitter4j.conf.ConfigurationBuilder;
+
 public class ItemActivity extends AppCompatActivity {
 
     String item_number;
@@ -37,6 +41,7 @@ public class ItemActivity extends AppCompatActivity {
     TextView date_view;
     int id_To_Update = 0;
     Button camera_button;
+    Button share_button;
     ImageView image;
 
 
@@ -53,6 +58,7 @@ public class ItemActivity extends AppCompatActivity {
 
         camera_button = (Button) findViewById(R.id.camera_button);
         image = (ImageView) findViewById(R.id.imageView);
+        share_button = (Button) findViewById(R.id.share_button);
 
         camera_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +92,7 @@ public class ItemActivity extends AppCompatActivity {
                 String date = rs.getString(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_DATE));
                 byte[] image_array = rs.getBlob(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_IMAGE));
                 int image_exists = rs.getInt(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_IMAGE_EXISTS));
+                int tweet_posted = rs.getInt(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_TWEET_POSTED));
 
                 if (!rs.isClosed()) {
                     rs.close();
@@ -102,7 +109,12 @@ public class ItemActivity extends AppCompatActivity {
                     camera_button.setVisibility(View.GONE);
                     location_view.setVisibility(View.GONE);
                     date_view.setVisibility(View.GONE);
+                    share_button.setVisibility(View.GONE);
 
+                }
+
+                if(tweet_posted == 1) {
+                    share_button.setVisibility(View.GONE);
                 }
 
                 title_view.setText(title);
@@ -134,6 +146,14 @@ public class ItemActivity extends AppCompatActivity {
         if (id == R.id.logout) {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        } else if (id == R.id.profile) {
+            Bundle dataBundle = new Bundle();
+            dataBundle.putString("username", username);
+
+            Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+
+            intent.putExtras(dataBundle);
             startActivity(intent);
         }
 
@@ -182,7 +202,7 @@ public class ItemActivity extends AppCompatActivity {
 
                 date = sdf.format(c.getTime());
 
-                if(mydb.updateItem(id_To_Update, title_view.getText().toString(), description_view.getText().toString(), "Completed!", latitude, longitude, date, "", username)) {
+                if(mydb.updateItem(id_To_Update, title_view.getText().toString(), description_view.getText().toString(), "Completed!", latitude, longitude, date, "", username, 0)) {
                     Button b = (Button) findViewById(R.id.completed_button);
                     b.setVisibility(View.GONE);
 
@@ -193,7 +213,7 @@ public class ItemActivity extends AppCompatActivity {
                     camera_button.setVisibility(View.VISIBLE);
                     location_view.setVisibility(View.VISIBLE);
                     date_view.setVisibility(View.VISIBLE);
-
+                    share_button.setVisibility(View.VISIBLE);
 
                 }
                 else {
@@ -201,5 +221,50 @@ public class ItemActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    public void tweetItem(View view) {
+        ConfigurationBuilder cb = new ConfigurationBuilder();
+        cb.setDebugEnabled(true)
+                .setOAuthConsumerKey("CZfZB6G9QvhvnzOYJCnSfjprD")
+                .setOAuthConsumerSecret("wOVwYFIG2zUhbg8iHaVcFbqzJVosCECTDwaFhbbGR41Y1UDWrN")
+                .setOAuthAccessToken("4259854637-ksfcHiieTwnTRqKkKITjnArH911KG7ZitT40uH5")
+                .setOAuthAccessTokenSecret("Xy0EC4TMppB2In8PP3DHLMdjcfowXwimAkF43xztM5Zib");
+        TwitterFactory tf = new TwitterFactory(cb.build());
+        final Twitter twitter = tf.getInstance();
+
+        Cursor rs;
+        int taskCount = 0;
+        int numRows = mydb.numberOfRows(username);
+        for (int i = 1; i <= numRows; i++) {
+            rs = mydb.getData(i, username);
+            rs.moveToFirst();
+            String completed = rs.getString(rs.getColumnIndex(DBHelper.ITEMS_COLUMN_COMPLETED));
+            if (completed.equals("Completed!")) {
+                taskCount++;
+            }
+
+            if (!rs.isClosed()) {
+                rs.close();
+            }
+        }
+
+        final int finalCount = taskCount;
+
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    String tweet = username + " completed: " + title_view.getText();
+                    tweet += "\nProgress: " + finalCount + "/100";
+                    twitter.updateStatus(tweet);
+                } catch (twitter4j.TwitterException te) {
+                    System.out.println("Twitter Exception");
+                }
+            }
+        }.start();
+
+        mydb.postTweet(id_To_Update, username);
+        share_button.setVisibility(View.GONE);
     }
 }
