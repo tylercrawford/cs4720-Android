@@ -8,6 +8,8 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -43,6 +45,7 @@ public class ItemActivity extends AppCompatActivity {
     Button camera_button;
     Button share_button;
     ImageView image;
+    TextView shared_text;
 
 
     @Override
@@ -59,6 +62,7 @@ public class ItemActivity extends AppCompatActivity {
         camera_button = (Button) findViewById(R.id.camera_button);
         image = (ImageView) findViewById(R.id.imageView);
         share_button = (Button) findViewById(R.id.share_button);
+        shared_text = (TextView) findViewById(R.id.shared_text);
 
         camera_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +107,8 @@ public class ItemActivity extends AppCompatActivity {
                     b.setVisibility(View.GONE);
 
                     location_view.setText("Longitude: " + longitude + " \nLatitude: " + latitude);
+
+                    date = date.substring(0, date.length()-9);
                     date_view.setText("Completed: " + date);
                 }
                 else {
@@ -110,11 +116,14 @@ public class ItemActivity extends AppCompatActivity {
                     location_view.setVisibility(View.GONE);
                     date_view.setVisibility(View.GONE);
                     share_button.setVisibility(View.GONE);
-
+                    shared_text.setVisibility(View.GONE);
                 }
 
                 if(tweet_posted == 1) {
                     share_button.setVisibility(View.GONE);
+                    shared_text.setVisibility(View.VISIBLE);
+                } else {
+                    shared_text.setVisibility(View.GONE);
                 }
 
                 title_view.setText(title);
@@ -206,7 +215,13 @@ public class ItemActivity extends AppCompatActivity {
                     Button b = (Button) findViewById(R.id.completed_button);
                     b.setVisibility(View.GONE);
 
-                    location_view.setText("Longitude: " + longitude + " \nLatitude: " + latitude);
+                    if (longitude != 0 && latitude != 0) {
+                        location_view.setText("Longitude: " + longitude + " \nLatitude: " + latitude);
+                    } else {
+                        location_view.setText("Longitude: Not Available \nLatitude: Not Available");
+                    }
+
+                    date = date.substring(0, date.length()-9);
                     date_view.setText("Completed: " + date);
                     completed_view.setText("Completed!");
 
@@ -264,7 +279,30 @@ public class ItemActivity extends AppCompatActivity {
             }
         }.start();
 
-        mydb.postTweet(id_To_Update, username);
-        share_button.setVisibility(View.GONE);
+        if (haveNetworkConnection()) {
+            mydb.postTweet(id_To_Update, username);
+            share_button.setVisibility(View.GONE);
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Unable to post tweet: no internet access", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean haveNetworkConnection() {
+
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
     }
 }

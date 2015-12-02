@@ -105,6 +105,14 @@
                 android:layout_below="@+id/location_field"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="16dp" />
+            <TextView
+                android:id="@+id/shared_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/abc_text_size_display_1_material"
+                android:layout_below="@+id/location_field"
+                android:layout_gravity="center"
+                android:text="You have shared this task"/>
 
 
         </LinearLayout>

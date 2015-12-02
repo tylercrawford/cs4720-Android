@@ -21,7 +21,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_gravity="center_horizontal"
-        android:inputType="textImeMultiLine"/>
+        android:inputType="text"
+        android:imeOptions="actionNext"
+        android:maxLines="1"/>
 
     <EditText
         android:layout_width="wrap_content"
